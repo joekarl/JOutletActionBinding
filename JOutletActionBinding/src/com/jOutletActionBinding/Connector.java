@@ -30,11 +30,13 @@ public class Connector {
                     _connectObjectToField(outletHolder, outletHolderField, ui);
                 }
             }
+            visitedClasses = new ArrayList<Class>();
             _connectActionsToOutletHolder(outletHolder, ui);
         }
     }
 
     private void _connectObjectToField(Object outletHolder, Field field, Object objectWithOutlets) {
+        visitedClasses.add(objectWithOutlets.getClass());
         Field[] objectWithOutletsFields = objectWithOutlets.getClass().getDeclaredFields();
         for (Field objectWithOutletsField : objectWithOutletsFields) {
             int modifiers = objectWithOutletsField.getModifiers();
@@ -61,7 +63,9 @@ public class Connector {
                         }
                     }
                 } else {
-                    _connectObjectToField(outletHolder, field, objectWithOutletsField.get(objectWithOutlets));
+                    if (!visitedClasses.contains(objectWithOutletsField.getType())) {
+                        _connectObjectToField(outletHolder, field, objectWithOutletsField.get(objectWithOutlets));
+                    }
                 }
             } catch (IllegalArgumentException ex) {
                 Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,8 +135,8 @@ public class Connector {
                 try {
                     Method actionMethod = null;
                     Method[] methods = outletHolder.getClass().getMethods();
-                    for(int i = 0; i < methods.length; ++i){
-                        if(methods[i].getName().equals(action)){
+                    for (int i = 0; i < methods.length; ++i) {
+                        if (methods[i].getName().equals(action)) {
                             actionMethod = methods[i];
                             break;
                         }
