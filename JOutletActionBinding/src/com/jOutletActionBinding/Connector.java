@@ -27,6 +27,7 @@ public class Connector {
             Field[] outletHolderFields = outletHolder.getClass().getDeclaredFields();
             for (Field outletHolderField : outletHolderFields) {
                 if (outletHolderField.isAnnotationPresent(Outlet.class)) {
+                    outletHolderField.setAccessible(true);
                     _connectObjectToField(outletHolder, outletHolderField, ui);
                 }
             }
@@ -39,8 +40,9 @@ public class Connector {
         visitedClasses.add(objectWithOutlets.getClass());
         Field[] objectWithOutletsFields = objectWithOutlets.getClass().getDeclaredFields();
         for (Field objectWithOutletsField : objectWithOutletsFields) {
+            objectWithOutletsField.setAccessible(true);
             int modifiers = objectWithOutletsField.getModifiers();
-            if (Modifier.isFinal(modifiers) || Modifier.isPrivate(modifiers) || Modifier.isStatic(modifiers)) {
+            if (Modifier.isFinal(modifiers) || Modifier.isStatic(modifiers)) {
                 continue;
             }
             try {
@@ -83,8 +85,9 @@ public class Connector {
         }
         Field[] objectWithActionsFields = objectWithActions.getClass().getDeclaredFields();
         for (Field objectWithActionsField : objectWithActionsFields) {
+            objectWithActionsField.setAccessible(true);
             int modifiers = objectWithActionsField.getModifiers();
-            if (Modifier.isPrivate(modifiers) || Modifier.isStatic(modifiers)) {
+            if (Modifier.isStatic(modifiers)) {
                 continue;
             }
             try {
