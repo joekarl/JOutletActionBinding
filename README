@@ -1,0 +1,44 @@
+Usage
+
+In the object you wish to bind outlets to (eg: controller), decorate the fields you wish to expose as outlets with the @Outlet annotation
+In the object you have actions (eg: controller), decorate the methods you wish to expose as actions with the @Action annotation
+--Note these methods must have one parameter with the type of event (or superclass of the event) you are wanting the action to receive
+
+To specify the connection in your to be bound object, decorate the bound object field with the @OutletConnector annotation
+To specify the connection in an object to an action, decorate the object field or the object class with the @ActionConnector annotation
+
+Use the connector class to connect an object to its outlets and actions.
+new Connector().connect(controller,view);
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+example:
+
+public class AppController {
+    @Outlet
+    MainWindow mainWindow;
+
+    @Action
+    public void doMouseMoved(EventObject e) {
+        MouseEvent me = (MouseEvent)e;
+        mainWindow.setTitle("[x:y] " + me.getX() + ":" + me.getY());
+    }
+}
+
+public class MainWindow extends JFrame {
+
+    @OutletConnector(outletClass = AppController.class, fieldName = "mainWindow")
+    MainWindow self = this;
+    @ActionConnector(actionClass=AppController.class,type=MouseMotionListener.class,action="doMouseMoved",listenerMethod="mouseMoved")
+    Container contentPane;
+
+    public MainWindow() {
+        contentPane = this.getContentPane();
+
+        //aditional code.........
+    }
+}
+
+public class Main{
+    public static void main(String[] args){
+        new Connector(new AppController(), new MainWindow());
+    }
+}
