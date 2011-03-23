@@ -22,6 +22,17 @@ public class Connector {
 
     private List<Class> visitedClasses = new ArrayList<Class>();
 
+    private static Connector _instance;
+
+    public static Connector defaultConnector(){
+        if(_instance == null){
+            _instance = new Connector();
+        }
+        return _instance;
+    }
+
+    private Connector(){}
+
     public void connect(Object outletHolder, Object ui) {
         if (outletHolder != null && ui != null) {
             Field[] outletHolderFields = outletHolder.getClass().getDeclaredFields();
@@ -61,7 +72,16 @@ public class Connector {
                         if (connector.outletClass() != null
                                 && Arrays.asList(connector.outletClass()).contains(field.getDeclaringClass())
                                 && field.getName().equals(connector.fieldName())) {
-                            field.set(outletHolder, objectWithOutletsField.get(objectWithOutlets));
+                            if (field.getType().isAssignableFrom(List.class)) {
+                                List outletList = (List) field.get(outletHolder);
+                                if (outletList == null) {
+                                    outletList = new ArrayList();
+                                    field.set(outletHolder, outletList);
+                                }
+                                outletList.add(objectWithOutletsField.get(objectWithOutlets));
+                            } else {
+                                field.set(outletHolder, objectWithOutletsField.get(objectWithOutlets));
+                            }
                         }
                     }
                 } else {
