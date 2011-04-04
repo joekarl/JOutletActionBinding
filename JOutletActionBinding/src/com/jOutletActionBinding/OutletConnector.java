@@ -17,6 +17,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface OutletConnector {
-    Class outletClass();
-    String fieldName();
+    String value();
 }

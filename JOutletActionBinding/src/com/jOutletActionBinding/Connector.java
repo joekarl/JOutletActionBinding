@@ -21,24 +21,25 @@ import java.util.logging.Logger;
 public class Connector {
 
     private List<Class> visitedClasses = new ArrayList<Class>();
-
     private static Connector _instance;
 
-    public static Connector defaultConnector(){
-        if(_instance == null){
+    protected static Connector defaultConnector() {
+        if (_instance == null) {
             _instance = new Connector();
         }
         return _instance;
     }
 
-    private Connector(){}
+    private Connector() {
+    }
 
-    public void connect(Object outletHolder, Object ui) {
+    protected void connect(ViewController outletHolder, Object ui) {
         if (outletHolder != null && ui != null) {
             Field[] outletHolderFields = outletHolder.getClass().getDeclaredFields();
             for (Field outletHolderField : outletHolderFields) {
                 if (outletHolderField.isAnnotationPresent(Outlet.class)) {
                     outletHolderField.setAccessible(true);
+                    visitedClasses = new ArrayList<Class>();
                     _connectObjectToField(outletHolder, outletHolderField, ui);
                 }
             }
@@ -48,6 +49,9 @@ public class Connector {
     }
 
     private void _connectObjectToField(Object outletHolder, Field field, Object objectWithOutlets) {
+        if (objectWithOutlets == null) {
+            return;
+        }
         visitedClasses.add(objectWithOutlets.getClass());
         Field[] objectWithOutletsFields = objectWithOutlets.getClass().getDeclaredFields();
         for (Field objectWithOutletsField : objectWithOutletsFields) {
@@ -69,9 +73,7 @@ public class Connector {
                 }
                 if (!connectors.isEmpty()) {
                     for (OutletConnector connector : connectors) {
-                        if (connector.outletClass() != null
-                                && Arrays.asList(connector.outletClass()).contains(field.getDeclaringClass())
-                                && field.getName().equals(connector.fieldName())) {
+                        if (field.getName().equals(connector.value())) {
                             if (field.getType().isAssignableFrom(List.class)) {
                                 List outletList = (List) field.get(outletHolder);
                                 if (outletList == null) {
@@ -99,6 +101,9 @@ public class Connector {
     }
 
     private void _connectActionsToOutletHolder(Object outletHolder, Object objectWithActions) {
+        if (objectWithActions == null) {
+            return;
+        }
         visitedClasses.add(objectWithActions.getClass());
         if (objectWithActions == null || outletHolder == null) {
             return;
@@ -121,10 +126,11 @@ public class Connector {
                         connectors.add(connector);
                     }
                 }
+                Object value = objectWithActionsField.get(objectWithActions);
                 if (!connectors.isEmpty()) {
-                    _connectActions(connectors, outletHolder, objectWithActionsField.get(objectWithActions));
-                } else if (!visitedClasses.contains(objectWithActionsField.get(objectWithActions).getClass())) {
-                    _connectActionsToOutletHolder(outletHolder, objectWithActionsField.get(objectWithActions));
+                    _connectActions(connectors, outletHolder, value);
+                } else if (value != null && !visitedClasses.contains(value.getClass())) {
+                    _connectActionsToOutletHolder(outletHolder, value);
                 }
             } catch (IllegalArgumentException ex) {
                 Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
@@ -151,10 +157,10 @@ public class Connector {
 
     private void _connectActions(List<ActionConnector> connectors, Object outletHolder, Object objectWithActions) {
         for (ActionConnector connector : connectors) {
-            if (connector != null && Arrays.asList(connector.actionClass()).contains(outletHolder.getClass())) {
+            if (connector != null) {
                 String action = connector.action();
-                Class actionType = connector.type();
-                String listenerMethod = connector.listenerMethod();
+                Class actionType = connector.actionType();
+                String listenerMethod = connector.actionListenerMethod();
                 try {
                     Method actionMethod = null;
                     Method[] methods = outletHolder.getClass().getMethods();
@@ -183,6 +189,5 @@ public class Connector {
                 }
             }
         }
-
     }
 }
