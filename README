@@ -12,9 +12,13 @@ new Connector().connect(controller,view);
  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 example:
 
-public class AppController {
+public class AppController  extends ViewController{
     @Outlet
     MainWindow mainWindow;
+
+    public AppController(){
+        super.initWithView(MainWindow.class);
+    }
 
     @Action
     public void doMouseMoved(EventObject e) {
@@ -27,7 +31,7 @@ public class MainWindow extends JFrame {
 
     @OutletConnector(outletClass = AppController.class, fieldName = "mainWindow")
     MainWindow self = this;
-    @ActionConnector(actionClass=AppController.class,type=MouseMotionListener.class,action="doMouseMoved",listenerMethod="mouseMoved")
+    @ActionConnector(actionType=MouseMotionListener.class,action="doMouseMoved",listenerMethod="mouseMoved")
     Container contentPane;
 
     public MainWindow() {
@@ -39,6 +43,6 @@ public class MainWindow extends JFrame {
 
 public class Main{
     public static void main(String[] args){
-        new Connector(new AppController(), new MainWindow());
+        new AppController();
     }
 }
