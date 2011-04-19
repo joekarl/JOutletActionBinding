@@ -29,9 +29,9 @@ public class AppController  extends ViewController{
 
 public class MainWindow extends JFrame {
 
-    @OutletConnector(outletClass = AppController.class, fieldName = "mainWindow")
+    @OutletConnector(fieldName = "mainWindow")
     MainWindow self = this;
-    @ActionConnector(actionType=MouseMotionListener.class,action="doMouseMoved",listenerMethod="mouseMoved")
+    @ActionConnector(actionType=MouseMotionListener.class,action="doMouseMoved",actionListenerMethod="mouseMoved")
     Container contentPane;
 
     public MainWindow() {
