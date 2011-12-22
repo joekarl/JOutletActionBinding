@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class Connector {
 
-    private List<Class> visitedClasses = new ArrayList<Class>();
+    private List<Class<?>> visitedClasses = new ArrayList<Class<?>>();
     private static Connector _instance;
 
     protected static Connector defaultConnector() {
@@ -39,11 +39,11 @@ public class Connector {
             for (Field outletHolderField : outletHolderFields) {
                 if (outletHolderField.isAnnotationPresent(Outlet.class)) {
                     outletHolderField.setAccessible(true);
-                    visitedClasses = new ArrayList<Class>();
+                    visitedClasses = new ArrayList<Class<?>>();
                     _connectObjectToField(outletHolder, outletHolderField, ui);
                 }
             }
-            visitedClasses = new ArrayList<Class>();
+            visitedClasses = new ArrayList<Class<?>>();
             _connectActionsToOutletHolder(outletHolder, ui);
         }
     }
