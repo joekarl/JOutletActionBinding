@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.jOutletActionBinding;
+package com.joekarl.joutletactionbinding;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +33,11 @@ public class Connector {
     private Connector() {
     }
 
-    protected void connect(ViewController outletHolder, Object ui) {
+    public static void connect(Object outletHolder, Object ui) {
+        defaultConnector().connectUI(outletHolder, ui);
+    }
+
+    protected void connectUI(Object outletHolder, Object ui) {
         if (outletHolder != null && ui != null) {
             Field[] outletHolderFields = outletHolder.getClass().getDeclaredFields();
             for (Field outletHolderField : outletHolderFields) {
@@ -174,6 +178,10 @@ public class Connector {
                         Object genericListener = GenericListener.create(actionType, listenerMethod, outletHolder, action);
                         Method addListenerMethod = objectWithActions.getClass().getMethod("add" + actionType.getSimpleName(), actionType);
                         addListenerMethod.invoke(objectWithActions, actionType.cast(genericListener));
+                    } else {
+                        Logger.getLogger(Connector.class.getName()).log(Level.WARNING,
+                                "No public method with signature and action decorator : {0} on object {1}",
+                                new Object[]{action, outletHolder.getClass().getName()});
                     }
                 } catch (NoSuchMethodException ex) {
                     Logger.getLogger(Connector.class.getName()).log(Level.SEVERE,

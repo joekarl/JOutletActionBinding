@@ -5,7 +5,7 @@ by Mark Davidson
 at http://java.sun.com/products/jfc/tsc/articles/generic-listener2/index.html
 */
 
-package com.jOutletActionBinding;
+package com.joekarl.joutletactionbinding;
 
 
 import java.lang.reflect.*;

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.jOutletActionBinding;
+package com.joekarl.joutletactionbinding;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,10 +12,10 @@ import java.lang.annotation.Target;
 
 /**
  *
- * @author karl ctr kirch
+ * @author karl
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-public @interface OutletConnectors {
-    OutletConnector[] value();
+@Target({ElementType.TYPE,ElementType.FIELD})
+public @interface ActionConnectors {
+    ActionConnector[] value();
 }

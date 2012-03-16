@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.jOutletActionBinding;
+package com.joekarl.joutletactionbinding;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
