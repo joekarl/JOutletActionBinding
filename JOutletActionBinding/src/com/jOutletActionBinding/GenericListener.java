@@ -1,3 +1,10 @@
+/*
+from `Using Dynamic Proxies to Generate Event Listeners Dynamically`
+by Mark Davidson
+
+at http://java.sun.com/products/jfc/tsc/articles/generic-listener2/index.html
+*/
+
 package com.jOutletActionBinding;
 
 
